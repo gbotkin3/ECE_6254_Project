@@ -50,14 +50,18 @@ drug200_dataset_reduced = dl.ReduceDimensions(drug200_dataset_numpy, 3)        #
 # drug200_dataset_numpy_labels: Numpy Array Containg the Drug Data Samples Labels
 # drug200_dataset_reduced: PCA Reduced Numpy Array Containg Drug Data
 
-#print(iris_dataset, iris_dataset_numpy, iris_dataset_numpy_labels, iris_dataset_reduced)
-#print(wheatseeds_dataset, wheatseeds_dataset_numpy, wheatseeds_dataset_numpy_labels, wheatseeds_dataset_reduced)
-#print(drug200_dataset, drug200_dataset_numpy, drug200_dataset_numpy_labels, drug200_dataset_reduced)
+print("Iris Dataset Panda: \n", iris_dataset, "\n Iris Dataset Numpy: \n", iris_dataset_numpy, "\n Iris Dataset Labels: \n", iris_dataset_numpy_labels, "\n Iris Dataset Reduced: \n", iris_dataset_reduced)
+print("Seeds Dataset Panda: \n", wheatseeds_dataset, "\n Seeds Dataset Numpy: \n", wheatseeds_dataset_numpy, "\n Seeds Dataset Labels: \n", wheatseeds_dataset_numpy_labels, "\n Seeds Dataset Reduced: \n", wheatseeds_dataset_reduced)
+print("Drug Dataset Panda: \n", drug200_dataset, "\n Drug Dataset Numpy: \n", drug200_dataset_numpy, "\n Drug Dataset Labels: \n", drug200_dataset_numpy_labels, "\n Drug Dataset Reduced: \n", drug200_dataset_reduced)
 
 ## Visualize the Datasets
 
+# Visual Code Here
 
 ## Train and Test Models
 
+# Model Code Here
 
 ## Report the Performance of Models
+
+# Performance Code Here
