@@ -12,18 +12,18 @@ def LoadDataset(path):
 
 def PandaToNumpy(dataframe):
 
-    return pd.DataFrame.to_numpy(dataframe)
+    return dataframe.to_numpy()
 
 def GetDummies(dataframe, columns, prefix):
 
     return pd.get_dummies(dataframe, columns = columns, prefix = prefix)
 
 def scaler(dataset):
-    
+
     scaler = StandardScaler()
 
     dataset = scaler.fit_transform(dataset)
-    
+
     return dataset
 
 def ReduceDimensions(dataset, n):
