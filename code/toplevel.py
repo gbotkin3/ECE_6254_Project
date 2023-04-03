@@ -59,6 +59,63 @@ print("Drug Dataset Panda: \n", drug200_dataset, "\n Drug Dataset Numpy: \n", dr
 # Visual Code Here
 
 ## Train and Test Models
+# Supervised Models
+drug, iris, seeds = mod.loadAllDatasets()
+features, targets = mod.splitFeaturesTarget(drug, iris, seeds)
+
+# Pandas To Numpy
+for i in range(len(features)):
+    features[i] = dl.PandaToNumpy(features[i])
+    targets[i] = dl.PandaToNumpy(targets[i])
+
+# Scale Data
+scaled_features = []
+for i in range(len(features)):
+    scaled_features.append(dl.scaler(features[i])) 
+
+
+drugX_train, drugX_test, drugY_train, drugY_test = mod.train_test_split(features[0], targets[0], test_size=0.25)
+irisX_train, irisX_test, irisY_train, irisY_test = mod.train_test_split(features[1], targets[1], test_size=0.25)
+seedsX_train, seedsX_test, seedsY_train, seedsY_test = mod.train_test_split(features[2], targets[2], test_size=0.25)
+
+# Decision Trees 
+drug_tree = mod.applyDecisionTree(drugX_train, drugY_train)
+iris_tree = mod.applyDecisionTree(irisX_train, irisY_train)
+seeds_tree = mod.applyDecisionTree(seedsX_train, seedsY_train)
+
+# SVM 
+drug_svm = mod.applySVM(drugX_train, drugY_train)
+iris_svm = mod.applySVM(irisX_train, irisY_train)
+seeds_svm = mod.applySVM(seedsX_train, seedsY_train)
+
+# Gaussian Process 
+drug_gp = mod.applyGP(drugX_train, drugY_train)
+iris_gp = mod.applyGP(irisX_train, irisY_train)
+seeds_gp = mod.applyGP(seedsX_train, seedsY_train)
+
+# KNN clf
+drug_knn = mod.applyKNN(drugX_train, drugY_train, 15)
+iris_knn = mod.applyKNN(irisX_train, irisY_train, 15)
+seeds_knn = mod.applyKNN(seedsX_train, seedsY_train, 15) 
+
+# TEST 
+print("--------------- DRUG DATA -------------------")
+print("Decision Tree:    ", mod.testModel(drug_tree, drugX_test, drugY_test))
+print("SVM:              ", mod.testModel(drug_svm, drugX_test, drugY_test))
+print("Gaussian Process: ", mod.testModel(drug_gp, drugX_test, drugY_test))
+print("KNN:              ", mod.testModel(drug_knn, drugX_test, drugY_test))
+
+print("--------------- IRIS DATA -------------------")
+print("Decision Tree:    ", mod.testModel(iris_tree, irisX_test, irisY_test))
+print("SVM:              ", mod.testModel(iris_svm, irisX_test, irisY_test))
+print("Gaussian Process: ", mod.testModel(iris_gp, irisX_test, irisY_test))
+print("KNN:              ", mod.testModel(iris_knn, irisX_test, irisY_test))
+
+print("--------------- SEEDS DATA ------------------")
+print("Decision Tree:    ", mod.testModel(seeds_tree, seedsX_test, seedsY_test))
+print("SVM:              ", mod.testModel(seeds_svm, seedsX_test, seedsY_test))
+print("Gaussian Process: ", mod.testModel(seeds_gp, seedsX_test, seedsY_test))
+print("KNN:              ", mod.testModel(seeds_knn, seedsX_test, seedsY_test))
 
 # Model Code Here
 
