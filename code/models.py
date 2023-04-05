@@ -1,10 +1,11 @@
 from dataloader import *
-from sklearn.svm import LinearSVC 
+from sklearn.svm import LinearSVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
+from sklearn.calibration import CalibratedClassifierCV
 
 # Loading Datasets
 def loadAllDatasets():
@@ -35,11 +36,11 @@ def splitFeaturesTarget(drug, iris, seeds):
 
 def applyDecisionTree(Xtrain, Ytrain):
     tree_clf = DecisionTreeClassifier()
-    tree_clf = tree_clf.fit(Xtrain, Ytrain)    
+    tree_clf = tree_clf.fit(Xtrain, Ytrain)
     return tree_clf
 
 def applySVM(Xtrain, Ytrain):
-    svm_clf = LinearSVC()
+    svm_clf = CalibratedClassifierCV(LinearSVC())
     svm_clf = svm_clf.fit(Xtrain, Ytrain)
     return svm_clf
 

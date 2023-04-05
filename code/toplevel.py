@@ -5,6 +5,10 @@ import performance as per
 
 import numpy as np
 
+# ignore sklearn FutureWarning
+from warnings import simplefilter
+simplefilter(action='ignore', category=FutureWarning)
+
 ## Import the Datasets as Panda Dataframes for visualization and Numpy Arrays for Training and Testing Models
 
 iris_dataset = dl.LoadDataset('iris.csv')        # Iris Dataset in Panda Dataframe Format
@@ -27,7 +31,7 @@ drug200_dataset_numpy = drug200_dataset_numpy.reindex(columns = ["Age", "Sex_M",
 drug200_dataset_numpy = dl.PandaToNumpy(drug200_dataset_numpy)                                                                                                                              # Drugs Dataset with Labels in Numpy Array Format
 drug200_dataset_numpy_labels = np.delete(drug200_dataset_numpy, range(0, len(drug200_dataset_numpy[0])-1), axis = 1)                                                                        # Drugs Dataset Labels
 drug200_dataset_numpy = np.delete(drug200_dataset_numpy, -1, axis = 1)                                                                                                                      # Drugs Dataset without Labels in Numpy Array Format
-drug200_dataset_numpy = dl.scaler(drug200_dataset_numpy)                                                                                                                                    # Drugs Dataset in Numpy Array Scaled using sklearn StandardScaler                                        
+drug200_dataset_numpy = dl.scaler(drug200_dataset_numpy)                                                                                                                                    # Drugs Dataset in Numpy Array Scaled using sklearn StandardScaler
 
 iris_dataset_reduced = dl.ReduceDimensions(iris_dataset_numpy, 3)              #  Iris Dataset Reduced to 3 Dimensions Using PCA
 wheatseeds_dataset_reduced = dl.ReduceDimensions(wheatseeds_dataset_numpy, 3)  # Seeds Dataset Reduced to 3 Dimensions Using PCA
@@ -59,6 +63,7 @@ print("Drug Dataset Panda: \n", drug200_dataset, "\n Drug Dataset Numpy: \n", dr
 # Visual Code Here
 
 ## Train and Test Models
+
 # Supervised Models
 drug, iris, seeds = mod.loadAllDatasets()
 features, targets = mod.splitFeaturesTarget(drug, iris, seeds)
@@ -71,24 +76,24 @@ for i in range(len(features)):
 # Scale Data
 scaled_features = []
 for i in range(len(features)):
-    scaled_features.append(dl.scaler(features[i])) 
+    scaled_features.append(dl.scaler(features[i]))
 
 
 drugX_train, drugX_test, drugY_train, drugY_test = mod.train_test_split(features[0], targets[0], test_size=0.25)
 irisX_train, irisX_test, irisY_train, irisY_test = mod.train_test_split(features[1], targets[1], test_size=0.25)
 seedsX_train, seedsX_test, seedsY_train, seedsY_test = mod.train_test_split(features[2], targets[2], test_size=0.25)
 
-# Decision Trees 
+# Decision Trees
 drug_tree = mod.applyDecisionTree(drugX_train, drugY_train)
 iris_tree = mod.applyDecisionTree(irisX_train, irisY_train)
 seeds_tree = mod.applyDecisionTree(seedsX_train, seedsY_train)
 
-# SVM 
+# SVM
 drug_svm = mod.applySVM(drugX_train, drugY_train)
 iris_svm = mod.applySVM(irisX_train, irisY_train)
 seeds_svm = mod.applySVM(seedsX_train, seedsY_train)
 
-# Gaussian Process 
+# Gaussian Process
 drug_gp = mod.applyGP(drugX_train, drugY_train)
 iris_gp = mod.applyGP(irisX_train, irisY_train)
 seeds_gp = mod.applyGP(seedsX_train, seedsY_train)
@@ -96,9 +101,9 @@ seeds_gp = mod.applyGP(seedsX_train, seedsY_train)
 # KNN clf
 drug_knn = mod.applyKNN(drugX_train, drugY_train, 15)
 iris_knn = mod.applyKNN(irisX_train, irisY_train, 15)
-seeds_knn = mod.applyKNN(seedsX_train, seedsY_train, 15) 
+seeds_knn = mod.applyKNN(seedsX_train, seedsY_train, 15)
 
-# TEST 
+# TEST
 print("--------------- DRUG DATA -------------------")
 print("Decision Tree:    ", mod.testModel(drug_tree, drugX_test, drugY_test))
 print("SVM:              ", mod.testModel(drug_svm, drugX_test, drugY_test))
@@ -117,8 +122,41 @@ print("SVM:              ", mod.testModel(seeds_svm, seedsX_test, seedsY_test))
 print("Gaussian Process: ", mod.testModel(seeds_gp, seedsX_test, seedsY_test))
 print("KNN:              ", mod.testModel(seeds_knn, seedsX_test, seedsY_test))
 
-# Model Code Here
 
 ## Report the Performance of Models
 
-# Performance Code Here
+# Decision Trees
+#drug_tree_metrics = per.getMetrics(drug_tree,drugX_test,drugY_test)
+#iris_tree_metrics = per.getMetrics(iris_tree,irisX_test,irisY_test)
+seeds_tree_metrics = per.getMetrics(seeds_tree,seedsX_test,seedsY_test)
+
+# SVM
+#drug_svm_metrics = per.getMetrics(drug_svm,drugX_test,drugY_test)
+#iris_svm_metrics = per.getMetrics(iris_svm,irisX_test,irisY_test)
+seeds_svm_metrics = per.getMetrics(seeds_svm,seedsX_test,seedsY_test)
+
+# Gaussian Process
+#drug_gp_metrics = per.getMetrics(drug_gp,drugX_test,drugY_test)
+#iris_gp_metrics = per.getMetrics(iris_gp,irisX_test,irisY_test)
+seeds_gp_metrics = per.getMetrics(seeds_gp,seedsX_test,seedsY_test)
+
+# KNN
+#drug_knn_metrics = per.getMetrics(drug_knn,drugX_test,drugY_test)
+#iris_knn_metrics = per.getMetrics(iris_knn,irisX_test,irisY_test)
+seeds_knn_metrics = per.getMetrics(seeds_knn,seedsX_test,seedsY_test)
+
+# combine
+#drug_metrics = [drug_tree_metrics,drug_svm_metrics,drug_gp_metrics,drug_knn_metrics]
+#seeds_metrics = [iris_tree_metrics,iris_svm_metrics,iris_gp_metrics,iris_knn_metrics]
+seeds_metrics = [seeds_tree_metrics,seeds_svm_metrics,seeds_gp_metrics,seeds_knn_metrics]
+
+# print
+print('\n')
+#per.printMetrics('drug',drug_metrics)
+#per.printMetrics('iris',seeds_metrics)
+per.printMetrics('seeds',seeds_metrics)
+
+# save (to datafiles)
+per.exportMetrics(drug_metrics,'drug_metrics.csv')
+per.exportMetrics(iris_metrics,'iris_metrics.csv')
+per.exportMetrics(seeds_metrics,'seeds_metrics.csv')
