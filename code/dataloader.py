@@ -12,7 +12,7 @@ def LoadDataset(path):
 
 def PandaToNumpy(dataframe):
 
-    return pd.DataFrame.to_numpy(dataframe)
+    return dataframe.to_numpy()
 
 def GetDummies(dataframe, columns, prefix):
 
