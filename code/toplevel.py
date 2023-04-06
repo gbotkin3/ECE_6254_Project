@@ -19,19 +19,19 @@ drug200_dataset = dl.LoadDataset('drug200.csv')  # Drugs Dataset in Panda Datafr
 iris_dataset_numpy = dl.PandaToNumpy(iris_dataset)                                                              # Iris Dataset with Labels in Numpy Array Format
 iris_dataset_numpy_labels = np.delete(iris_dataset_numpy, range(0, len(iris_dataset_numpy[0])-1), axis = 1)     # Iris Dataset Labels
 iris_dataset_numpy = np.delete(iris_dataset_numpy, -1, axis = 1)                                                # Iris Dataset without Labels in Numpy Array Format
-iris_dataset_numpy = dl.scaler(iris_dataset_numpy)                                                              # Iris Dataset in Numpy Array Scaled using sklearn StandardScaler
+# iris_dataset_numpy = dl.scaler(iris_dataset_numpy)                                                              # Iris Dataset in Numpy Array Scaled using sklearn StandardScaler
 
 wheatseeds_dataset_numpy = dl.PandaToNumpy(wheatseeds_dataset)                                                                  # Seeds Dataset with Labels in Numpy Array Format
 wheatseeds_dataset_numpy_labels = np.delete(wheatseeds_dataset_numpy, range(0, len(wheatseeds_dataset_numpy[0])-1), axis = 1)   # Seeds Dataset Labels
 wheatseeds_dataset_numpy = np.delete(wheatseeds_dataset_numpy, -1, axis = 1)                                                    # Seeds Dataset without Labels in Numpy Array Format
-wheatseeds_dataset_numpy = dl.scaler(wheatseeds_dataset_numpy)                                                                  # Seeds Dataset in Numpy Array Scaled using sklearn StandardScaler
+# wheatseeds_dataset_numpy = dl.scaler(wheatseeds_dataset_numpy)                                                                  # Seeds Dataset in Numpy Array Scaled using sklearn StandardScaler
 
 drug200_dataset_numpy = dl.GetDummies(drug200_dataset, columns = ["Sex", "BP", "Cholesterol"], prefix = ["Sex", "BP", "Cholesterol"])                                                       # Convert Catagorical Data to Numbers with One Hot Encoding
 drug200_dataset_numpy = drug200_dataset_numpy.reindex(columns = ["Age", "Sex_M", "Sex_F", "BP_LOW", "BP_NORMAL", "BP_HIGH", "Cholesterol_NORMAL", "Cholesterol_HIGH", "Na_to_K", "Drug"])   # Reorganize Columns
 drug200_dataset_numpy = dl.PandaToNumpy(drug200_dataset_numpy)                                                                                                                              # Drugs Dataset with Labels in Numpy Array Format
 drug200_dataset_numpy_labels = np.delete(drug200_dataset_numpy, range(0, len(drug200_dataset_numpy[0])-1), axis = 1)                                                                        # Drugs Dataset Labels
 drug200_dataset_numpy = np.delete(drug200_dataset_numpy, -1, axis = 1)                                                                                                                      # Drugs Dataset without Labels in Numpy Array Format
-drug200_dataset_numpy = dl.scaler(drug200_dataset_numpy)                                                                                                                                    # Drugs Dataset in Numpy Array Scaled using sklearn StandardScaler
+# drug200_dataset_numpy = dl.scaler(drug200_dataset_numpy)                                                                                                                                    # Drugs Dataset in Numpy Array Scaled using sklearn StandardScaler
 
 iris_dataset_reduced = dl.ReduceDimensions(iris_dataset_numpy, 3)              #  Iris Dataset Reduced to 3 Dimensions Using PCA
 wheatseeds_dataset_reduced = dl.ReduceDimensions(wheatseeds_dataset_numpy, 3)  # Seeds Dataset Reduced to 3 Dimensions Using PCA
@@ -54,9 +54,9 @@ drug200_dataset_reduced = dl.ReduceDimensions(drug200_dataset_numpy, 3)        #
 # drug200_dataset_numpy_labels: Numpy Array Containg the Drug Data Samples Labels
 # drug200_dataset_reduced: PCA Reduced Numpy Array Containg Drug Data
 
-print("Iris Dataset Panda: \n", iris_dataset, "\n Iris Dataset Numpy: \n", iris_dataset_numpy, "\n Iris Dataset Labels: \n", iris_dataset_numpy_labels, "\n Iris Dataset Reduced: \n", iris_dataset_reduced)
-print("Seeds Dataset Panda: \n", wheatseeds_dataset, "\n Seeds Dataset Numpy: \n", wheatseeds_dataset_numpy, "\n Seeds Dataset Labels: \n", wheatseeds_dataset_numpy_labels, "\n Seeds Dataset Reduced: \n", wheatseeds_dataset_reduced)
-print("Drug Dataset Panda: \n", drug200_dataset, "\n Drug Dataset Numpy: \n", drug200_dataset_numpy, "\n Drug Dataset Labels: \n", drug200_dataset_numpy_labels, "\n Drug Dataset Reduced: \n", drug200_dataset_reduced)
+# print("Iris Dataset Panda: \n", iris_dataset, "\n Iris Dataset Numpy: \n", iris_dataset_numpy, "\n Iris Dataset Labels: \n", iris_dataset_numpy_labels, "\n Iris Dataset Reduced: \n", iris_dataset_reduced)
+# print("Seeds Dataset Panda: \n", wheatseeds_dataset, "\n Seeds Dataset Numpy: \n", wheatseeds_dataset_numpy, "\n Seeds Dataset Labels: \n", wheatseeds_dataset_numpy_labels, "\n Seeds Dataset Reduced: \n", wheatseeds_dataset_reduced)
+# print("Drug Dataset Panda: \n", drug200_dataset, "\n Drug Dataset Numpy: \n", drug200_dataset_numpy, "\n Drug Dataset Labels: \n", drug200_dataset_numpy_labels, "\n Drug Dataset Reduced: \n", drug200_dataset_reduced)
 
 ## Visualize the Datasets
 
@@ -64,44 +64,66 @@ print("Drug Dataset Panda: \n", drug200_dataset, "\n Drug Dataset Numpy: \n", dr
 
 ## Train and Test Models
 
-# Supervised Models
-drug, iris, seeds = mod.loadAllDatasets()
-features, targets = mod.splitFeaturesTarget(drug, iris, seeds)
+drug200_dataset_numpy_labels = np.ravel(drug200_dataset_numpy_labels, order='C')
+iris_dataset_numpy_labels = np.ravel(iris_dataset_numpy_labels, order='C')
+wheatseeds_dataset_numpy_labels = np.ravel(wheatseeds_dataset_numpy_labels, order='C')
+# Normal Datasets
+drugX_train, drugX_test, drugY_train, drugY_test = mod.train_test_split(drug200_dataset_numpy, drug200_dataset_numpy_labels, test_size=0.25)
+irisX_train, irisX_test, irisY_train, irisY_test = mod.train_test_split(iris_dataset_numpy, iris_dataset_numpy_labels, test_size=0.25)
+seedsX_train, seedsX_test, seedsY_train, seedsY_test = mod.train_test_split(wheatseeds_dataset_numpy, wheatseeds_dataset_numpy_labels, test_size=0.25)
+#Reduced Datasets
+drugX_train_reduced, drugX_test_reduced, drugY_train_reduced, drugY_test_reduced = mod.train_test_split(drug200_dataset_reduced, drug200_dataset_numpy_labels, test_size=0.25)
+irisX_train_reduced, irisX_test_reduced, irisY_train_reduced, irisY_test_reduced = mod.train_test_split(iris_dataset_reduced, iris_dataset_numpy_labels, test_size=0.25)
+seedsX_train_reduced, seedsX_test_reduced, seedsY_train_reduced, seedsY_test_reduced = mod.train_test_split(wheatseeds_dataset_reduced, wheatseeds_dataset_numpy_labels, test_size=0.25)
 
-# Pandas To Numpy
-for i in range(len(features)):
-    features[i] = dl.PandaToNumpy(features[i])
-    targets[i] = dl.PandaToNumpy(targets[i])
+# Scale
+drugX_train = dl.scaler(drugX_train)
+drugX_test = dl.scaler(drugX_test)
+irisX_train = dl.scaler(irisX_train)
+irisX_test = dl.scaler(irisX_test)
+seedsX_train = dl.scaler(seedsX_train) 
+seedsX_test = dl.scaler(seedsX_test)
 
-# Scale Data
-scaled_features = []
-for i in range(len(features)):
-    scaled_features.append(dl.scaler(features[i]))
+drugX_train_reduced = dl.scaler(drugX_train_reduced)
+drugX_test_reduced = dl.scaler(drugX_test_reduced)
+irisX_train_reduced = dl.scaler(irisX_train_reduced)
+irisX_test_reduced = dl.scaler(irisX_test_reduced)
+seedsX_train_reduced = dl.scaler(seedsX_train_reduced) 
+seedsX_test_reduced = dl.scaler(seedsX_test_reduced)
 
-
-drugX_train, drugX_test, drugY_train, drugY_test = mod.train_test_split(features[0], targets[0], test_size=0.25)
-irisX_train, irisX_test, irisY_train, irisY_test = mod.train_test_split(features[1], targets[1], test_size=0.25)
-seedsX_train, seedsX_test, seedsY_train, seedsY_test = mod.train_test_split(features[2], targets[2], test_size=0.25)
 
 # Decision Trees
+mod.DecisionTreeTuning(drugX_train, drugY_train, drugX_test, drugY_test)
 drug_tree = mod.applyDecisionTree(drugX_train, drugY_train)
 iris_tree = mod.applyDecisionTree(irisX_train, irisY_train)
 seeds_tree = mod.applyDecisionTree(seedsX_train, seedsY_train)
+drug_tree_reduced = mod.applyDecisionTree(drugX_train_reduced, drugY_train_reduced)
+iris_tree_reduced = mod.applyDecisionTree(irisX_train_reduced, irisY_train_reduced)
+seeds_tree_reduced = mod.applyDecisionTree(seedsX_train_reduced, seedsY_train_reduced)
 
 # SVM
 drug_svm = mod.applySVM(drugX_train, drugY_train)
 iris_svm = mod.applySVM(irisX_train, irisY_train)
 seeds_svm = mod.applySVM(seedsX_train, seedsY_train)
+drug_svm_reduced = mod.applySVM(drugX_train_reduced, drugY_train_reduced)
+iris_svm_reduced = mod.applySVM(irisX_train_reduced, irisY_train_reduced)
+seeds_svm_reduced = mod.applySVM(seedsX_train_reduced, seedsY_train_reduced)
 
 # Gaussian Process
 drug_gp = mod.applyGP(drugX_train, drugY_train)
 iris_gp = mod.applyGP(irisX_train, irisY_train)
 seeds_gp = mod.applyGP(seedsX_train, seedsY_train)
+drug_gp_reduced = mod.applyGP(drugX_train_reduced, drugY_train_reduced)
+iris_gp_reduced = mod.applyGP(irisX_train_reduced, irisY_train_reduced)
+seeds_gp_reduced = mod.applyGP(seedsX_train_reduced, seedsY_train_reduced)
 
 # KNN clf
 drug_knn = mod.applyKNN(drugX_train, drugY_train, 15)
 iris_knn = mod.applyKNN(irisX_train, irisY_train, 15)
 seeds_knn = mod.applyKNN(seedsX_train, seedsY_train, 15)
+drug_knn_reduced = mod.applyKNN(drugX_train_reduced, drugY_train_reduced, 15)
+iris_knn_reduced = mod.applyKNN(irisX_train_reduced, irisY_train_reduced, 15)
+seeds_knn_reduced = mod.applyKNN(seedsX_train_reduced, seedsY_train_reduced, 15)
 
 # TEST
 print("--------------- DRUG DATA -------------------")
@@ -109,18 +131,33 @@ print("Decision Tree:    ", mod.testModel(drug_tree, drugX_test, drugY_test))
 print("SVM:              ", mod.testModel(drug_svm, drugX_test, drugY_test))
 print("Gaussian Process: ", mod.testModel(drug_gp, drugX_test, drugY_test))
 print("KNN:              ", mod.testModel(drug_knn, drugX_test, drugY_test))
+print("--------------- REDUCED DRUG DATA -------------------")
+print("Decision Tree:    ", mod.testModel(drug_tree_reduced, drugX_test_reduced, drugY_test_reduced))
+print("SVM:              ", mod.testModel(drug_svm_reduced, drugX_test_reduced, drugY_test_reduced))
+print("Gaussian Process: ", mod.testModel(drug_gp_reduced, drugX_test_reduced, drugY_test_reduced))
+print("KNN:              ", mod.testModel(drug_knn_reduced, drugX_test_reduced, drugY_test_reduced))
 
 print("--------------- IRIS DATA -------------------")
 print("Decision Tree:    ", mod.testModel(iris_tree, irisX_test, irisY_test))
 print("SVM:              ", mod.testModel(iris_svm, irisX_test, irisY_test))
 print("Gaussian Process: ", mod.testModel(iris_gp, irisX_test, irisY_test))
 print("KNN:              ", mod.testModel(iris_knn, irisX_test, irisY_test))
+print("--------------- REDUCED IRIS DATA -------------------")
+print("Decision Tree:    ", mod.testModel(iris_tree_reduced, irisX_test_reduced, irisY_test_reduced))
+print("SVM:              ", mod.testModel(iris_svm_reduced, irisX_test_reduced, irisY_test_reduced))
+print("Gaussian Process: ", mod.testModel(iris_gp_reduced, irisX_test_reduced, irisY_test_reduced))
+print("KNN:              ", mod.testModel(iris_knn_reduced, irisX_test_reduced, irisY_test_reduced))
 
 print("--------------- SEEDS DATA ------------------")
 print("Decision Tree:    ", mod.testModel(seeds_tree, seedsX_test, seedsY_test))
 print("SVM:              ", mod.testModel(seeds_svm, seedsX_test, seedsY_test))
 print("Gaussian Process: ", mod.testModel(seeds_gp, seedsX_test, seedsY_test))
 print("KNN:              ", mod.testModel(seeds_knn, seedsX_test, seedsY_test))
+print("--------------- REDUCED SEEDS DATA ------------------")
+print("Decision Tree:    ", mod.testModel(seeds_tree_reduced, seedsX_test_reduced, seedsY_test_reduced))
+print("SVM:              ", mod.testModel(seeds_svm_reduced, seedsX_test_reduced, seedsY_test_reduced))
+print("Gaussian Process: ", mod.testModel(seeds_gp_reduced, seedsX_test_reduced, seedsY_test_reduced))
+print("KNN:              ", mod.testModel(seeds_knn_reduced, seedsX_test_reduced, seedsY_test_reduced))
 
 
 ## Report the Performance of Models
