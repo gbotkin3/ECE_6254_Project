@@ -24,6 +24,7 @@ wheatseeds_dataset_numpy = dl.scaler(wheatseeds_dataset_numpy)                  
 
 drug200_dataset_numpy = dl.GetDummies(drug200_dataset, columns = ["Sex", "BP", "Cholesterol"], prefix = ["Sex", "BP", "Cholesterol"])                                                       # Convert Catagorical Data to Numbers with One Hot Encoding
 drug200_dataset_numpy = drug200_dataset_numpy.reindex(columns = ["Age", "Sex_M", "Sex_F", "BP_LOW", "BP_NORMAL", "BP_HIGH", "Cholesterol_NORMAL", "Cholesterol_HIGH", "Na_to_K", "Drug"])   # Reorganize Columns
+drug200_dataset_encoded = drug200_dataset_numpy
 drug200_dataset_numpy = dl.PandaToNumpy(drug200_dataset_numpy)                                                                                                                              # Drugs Dataset with Labels in Numpy Array Format
 drug200_dataset_numpy_labels = np.delete(drug200_dataset_numpy, range(0, len(drug200_dataset_numpy[0])-1), axis = 1)                                                                        # Drugs Dataset Labels
 drug200_dataset_numpy = np.delete(drug200_dataset_numpy, -1, axis = 1)                                                                                                                      # Drugs Dataset without Labels in Numpy Array Format
@@ -57,6 +58,77 @@ print("Drug Dataset Panda: \n", drug200_dataset, "\n Drug Dataset Numpy: \n", dr
 ## Visualize the Datasets
 
 # Visual Code Here
+
+# Plot and save the 3D scatterplots for the reduced datasets (3 principal components as features)
+# Iris Dataset
+# Since the labels are not ints, we can't color the datapoints unless we replace them with ints with the scatterplot function used
+iris_dataset_numpy_labels_ints = np.zeros(iris_dataset_numpy_labels.shape)
+# Encode each label as an int
+for i in range(0, iris_dataset_numpy_labels.shape[0]):
+    if iris_dataset_numpy_labels[i] == 'Iris-setosa':
+        iris_dataset_numpy_labels_ints[i] = 1
+    elif iris_dataset_numpy_labels[i] == 'Iris-versicolor':
+        iris_dataset_numpy_labels_ints[i] = 2
+    else:
+        iris_dataset_numpy_labels_ints[i] = 3
+vis.scatter_plot_all(iris_dataset_reduced, iris_dataset_numpy_labels_ints, show_plot=True, dataset_name="Iris")
+
+# Wheatseeds Dataset
+# Labels are already encoded as ints
+vis.scatter_plot_all(wheatseeds_dataset_reduced, wheatseeds_dataset_numpy_labels, show_plot=True, dataset_name="Seeds")
+
+# Drug Dataset
+drug200_dataset_numpy_labels_ints = np.zeros(drug200_dataset_numpy_labels.shape)
+# Encode each label as an int
+for i in range(0, drug200_dataset_numpy_labels.shape[0]):
+    if drug200_dataset_numpy_labels[i] == 'drugY':
+        drug200_dataset_numpy_labels_ints[i] = 1
+    elif drug200_dataset_numpy_labels[i] == 'drugC':
+        drug200_dataset_numpy_labels_ints[i] = 2
+    elif drug200_dataset_numpy_labels[i] == 'drugA':
+        drug200_dataset_numpy_labels_ints[i] = 3
+    elif drug200_dataset_numpy_labels[i] == 'drugB':
+        drug200_dataset_numpy_labels_ints[i] = 4
+    elif drug200_dataset_numpy_labels[i] == 'drugX':
+        drug200_dataset_numpy_labels_ints[i] = 5
+vis.scatter_plot_all(drug200_dataset_reduced, drug200_dataset_numpy_labels_ints, show_plot=True, dataset_name="Drug")
+
+# Create pair plots for all datasets with all the actual features
+vis.pairplot_all(iris_dataset, show_plot=True, dataset_name="Iris")
+vis.pairplot_all(wheatseeds_dataset, show_plot=True, dataset_name="Seeds")
+vis.pairplot_all(drug200_dataset_encoded, show_plot=True, dataset_name="Drug")
+
+# Create pair plots for the three principal components for all datasets
+
+# Take the 3 principal components of the Iris dataset and convert to a Pandas dataframe
+iris_dataframe_reduced = pd.DataFrame(np.hstack((iris_dataset_reduced, iris_dataset_numpy_labels)), columns = ['Component 0', 'Component 1', 'Component 2', 'Labels'])
+# Take the 3 principal components of the Wheat Seeds dataset and convert to a Pandas dataframe
+seeds_dataframe_reduced = pd.DataFrame(np.hstack((wheatseeds_dataset_reduced, wheatseeds_dataset_numpy_labels)), columns = ['Component 0', 'Component 1', 'Component 2', 'Labels'])
+# Take the 3 principal components of the Drug 200 dataset and convert to a Pandas dataframe
+drug200_dataframe_reduced = pd.DataFrame(np.hstack((drug200_dataset_reduced, drug200_dataset_numpy_labels)), columns = ['Component 0', 'Component 1', 'Component 2', 'Labels'])
+
+# Pair plots for principal components
+vis.pairplot_all(iris_dataframe_reduced, show_plot = True, dataset_name = 'Iris_Principal_Components')
+vis.pairplot_all(seeds_dataframe_reduced, show_plot = True, dataset_name = 'Seeds_Principal_Components')
+vis.pairplot_all(drug200_dataframe_reduced, show_plot = True, dataset_name = 'Drug200_Principal_Components')
+
+# Create KDE plots for all features for all the dataframes
+# KDE only really makes sense for Iris dataset (in cm) (similar variance, same units, not categorical, continuous)
+vis.kde_map_all(iris_dataset, show_plot=True, dataset_name="Iris", xaxis_label='Length (cm)')
+vis.kde_map_all(wheatseeds_dataset, show_plot=True, dataset_name="Seeds", xaxis_label="")
+# drug200_Numerical = pd.DataFrame(np.hstack((drug200_dataset_numpy_labels_ints, drug200_dataset_numpy_labels)), columns = drug200_dataset.columns.values.tolist())
+drug200_Numerical = drug200_dataset.copy()
+
+for col in drug200_Numerical.columns.values.tolist():
+    if drug200_Numerical[col].dtype == object:
+        drug200_Numerical[col] = (pd.factorize(drug200_Numerical[col])[0]+1) * 20
+vis.kde_map_all(drug200_Numerical, show_plot=True, dataset_name="Drug200", xaxis_label="")
+
+# Create KDE plots for the principal components instead of the features
+vis.kde_map_all(iris_dataframe_reduced, show_plot=True, dataset_name='Iris_Principal_Components', xaxis_label='')
+vis.kde_map_all(seeds_dataframe_reduced, show_plot=True, dataset_name='Seeds_Principal_Components', xaxis_label='')
+vis.kde_map_all(drug200_dataframe_reduced, show_plot=True, dataset_name='Drug200_Principal_Components', xaxis_label='')
+
 
 ## Train and Test Models
 
