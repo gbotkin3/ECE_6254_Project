@@ -20,10 +20,13 @@ The following packages are required to run the python file.
 5. seaborn == 0.12.2
 
 
-## Run the following commands to clone the repository
+## Initial Setup
 
+Run the following commands to clone the repository
+
+```
 git clone https://github.com/gbotkin3/ECE_6254__Final_Project.git
-
+```
 ## Running
 The python code can be ran from the code directory though the command ```python3 toplevel.py```.
 
