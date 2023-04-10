@@ -13,11 +13,11 @@ By looking at the visulization of a set of data, is it possible to predict the p
 ## Required Dependencies
 The following packages are required to run the python file.
 
-matplotlib == 3.7.1
-numpy == 1.24.2
-pandas == 1.5.3
-scikit_learn == 1.2.2
-seaborn == 0.12.2
+1. matplotlib == 3.7.1
+2. numpy == 1.24.2
+3. pandas == 1.5.3
+4. scikit_learn == 1.2.2
+5. seaborn == 0.12.2
 
 
 ## Run the following commands to clone the repository
