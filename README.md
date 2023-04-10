@@ -25,13 +25,12 @@ The following packages are required to run the python file.
 Run the following commands to clone the repository
 
 ```
-git clone https://github.com/gbotkin3/ECE_6254__Final_Project.git
+git clone https://github.com/gbotkin3/ECE_6254_Final_Project.git
 ```
 ## Running
 The python code can be ran from the code directory though the command ```python3 toplevel.py```.
 
 Results are shown in console and stored in ./results and ./results/figures
-
 
 ## Visualization Methods (Stored in ./results/figures)
 1. Scatter Map
