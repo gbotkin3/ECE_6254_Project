@@ -4,6 +4,7 @@ import models as mod
 import performance as per
 
 import numpy as np
+import pandas as pd
 
 # ignore sklearn FutureWarning
 from warnings import simplefilter
@@ -28,6 +29,7 @@ wheatseeds_dataset_numpy = np.delete(wheatseeds_dataset_numpy, -1, axis = 1)    
 
 drug200_dataset_numpy = dl.GetDummies(drug200_dataset, columns = ["Sex", "BP", "Cholesterol"], prefix = ["Sex", "BP", "Cholesterol"])                                                       # Convert Catagorical Data to Numbers with One Hot Encoding
 drug200_dataset_numpy = drug200_dataset_numpy.reindex(columns = ["Age", "Sex_M", "Sex_F", "BP_LOW", "BP_NORMAL", "BP_HIGH", "Cholesterol_NORMAL", "Cholesterol_HIGH", "Na_to_K", "Drug"])   # Reorganize Columns
+drug200_dataset_encoded = drug200_dataset_numpy
 drug200_dataset_numpy = dl.PandaToNumpy(drug200_dataset_numpy)                                                                                                                              # Drugs Dataset with Labels in Numpy Array Format
 drug200_dataset_numpy_labels = np.delete(drug200_dataset_numpy, range(0, len(drug200_dataset_numpy[0])-1), axis = 1)                                                                        # Drugs Dataset Labels
 drug200_dataset_numpy = np.delete(drug200_dataset_numpy, -1, axis = 1)                                                                                                                      # Drugs Dataset without Labels in Numpy Array Format
@@ -54,16 +56,96 @@ drug200_dataset_reduced = dl.ReduceDimensions(drug200_dataset_numpy, 3)        #
 # drug200_dataset_numpy_labels: Numpy Array Containg the Drug Data Samples Labels
 # drug200_dataset_reduced: PCA Reduced Numpy Array Containg Drug Data
 
+<<<<<<< HEAD
 # print("Iris Dataset Panda: \n", iris_dataset, "\n Iris Dataset Numpy: \n", iris_dataset_numpy, "\n Iris Dataset Labels: \n", iris_dataset_numpy_labels, "\n Iris Dataset Reduced: \n", iris_dataset_reduced)
 # print("Seeds Dataset Panda: \n", wheatseeds_dataset, "\n Seeds Dataset Numpy: \n", wheatseeds_dataset_numpy, "\n Seeds Dataset Labels: \n", wheatseeds_dataset_numpy_labels, "\n Seeds Dataset Reduced: \n", wheatseeds_dataset_reduced)
 # print("Drug Dataset Panda: \n", drug200_dataset, "\n Drug Dataset Numpy: \n", drug200_dataset_numpy, "\n Drug Dataset Labels: \n", drug200_dataset_numpy_labels, "\n Drug Dataset Reduced: \n", drug200_dataset_reduced)
+=======
+#print("Iris Dataset Panda: \n", iris_dataset, "\n Iris Dataset Numpy: \n", iris_dataset_numpy, "\n Iris Dataset Labels: \n", iris_dataset_numpy_labels, "\n Iris Dataset Reduced: \n", iris_dataset_reduced)
+#print("Seeds Dataset Panda: \n", wheatseeds_dataset, "\n Seeds Dataset Numpy: \n", wheatseeds_dataset_numpy, "\n Seeds Dataset Labels: \n", wheatseeds_dataset_numpy_labels, "\n Seeds Dataset Reduced: \n", wheatseeds_dataset_reduced)
+#print("Drug Dataset Panda: \n", drug200_dataset, "\n Drug Dataset Numpy: \n", drug200_dataset_numpy, "\n Drug Dataset Labels: \n", drug200_dataset_numpy_labels, "\n Drug Dataset Reduced: \n", drug200_dataset_reduced)
+>>>>>>> 241bb55903739b419b4920d63fb0984e9a23c576
 
 ## Visualize the Datasets
 
 # Visual Code Here
 
+# Plot and save the 3D scatterplots for the reduced datasets (3 principal components as features)
+# Iris Dataset
+# Since the labels are not ints, we can't color the datapoints unless we replace them with ints with the scatterplot function used
+iris_dataset_numpy_labels_ints = np.zeros(iris_dataset_numpy_labels.shape)
+# Encode each label as an int
+for i in range(0, iris_dataset_numpy_labels.shape[0]):
+    if iris_dataset_numpy_labels[i] == 'Iris-setosa':
+        iris_dataset_numpy_labels_ints[i] = 1
+    elif iris_dataset_numpy_labels[i] == 'Iris-versicolor':
+        iris_dataset_numpy_labels_ints[i] = 2
+    else:
+        iris_dataset_numpy_labels_ints[i] = 3
+vis.scatter_plot_all(iris_dataset_reduced, iris_dataset_numpy_labels_ints, show_plot=False, dataset_name="Iris")
+
+# Wheatseeds Dataset
+# Labels are already encoded as ints
+vis.scatter_plot_all(wheatseeds_dataset_reduced, wheatseeds_dataset_numpy_labels, show_plot=False, dataset_name="Seeds")
+
+# Drug Dataset
+drug200_dataset_numpy_labels_ints = np.zeros(drug200_dataset_numpy_labels.shape)
+# Encode each label as an int
+for i in range(0, drug200_dataset_numpy_labels.shape[0]):
+    if drug200_dataset_numpy_labels[i] == 'drugY':
+        drug200_dataset_numpy_labels_ints[i] = 1
+    elif drug200_dataset_numpy_labels[i] == 'drugC':
+        drug200_dataset_numpy_labels_ints[i] = 2
+    elif drug200_dataset_numpy_labels[i] == 'drugA':
+        drug200_dataset_numpy_labels_ints[i] = 3
+    elif drug200_dataset_numpy_labels[i] == 'drugB':
+        drug200_dataset_numpy_labels_ints[i] = 4
+    elif drug200_dataset_numpy_labels[i] == 'drugX':
+        drug200_dataset_numpy_labels_ints[i] = 5
+vis.scatter_plot_all(drug200_dataset_reduced, drug200_dataset_numpy_labels_ints, show_plot=False, dataset_name="Drug")
+
+# Create pair plots for all datasets with all the actual features
+vis.pairplot_all(iris_dataset, show_plot=False, dataset_name="Iris")
+vis.pairplot_all(wheatseeds_dataset, show_plot=False, dataset_name="Seeds")
+vis.pairplot_all(drug200_dataset_encoded, show_plot=False, dataset_name="Drug")
+
+# Create pair plots for the three principal components for all datasets
+
+# Take the 3 principal components of the Iris dataset and convert to a Pandas dataframe
+iris_dataframe_reduced = pd.DataFrame(np.hstack((iris_dataset_reduced, iris_dataset_numpy_labels)), columns = ['Component 0', 'Component 1', 'Component 2', 'Labels'])
+# Take the 3 principal components of the Wheat Seeds dataset and convert to a Pandas dataframe
+seeds_dataframe_reduced = pd.DataFrame(np.hstack((wheatseeds_dataset_reduced, wheatseeds_dataset_numpy_labels)), columns = ['Component 0', 'Component 1', 'Component 2', 'Labels'])
+# Take the 3 principal components of the Drug 200 dataset and convert to a Pandas dataframe
+drug200_dataframe_reduced = pd.DataFrame(np.hstack((drug200_dataset_reduced, drug200_dataset_numpy_labels)), columns = ['Component 0', 'Component 1', 'Component 2', 'Labels'])
+
+# Pair plots for principal components
+vis.pairplot_all(iris_dataframe_reduced, show_plot = False, dataset_name = 'Iris_Principal_Components')
+vis.pairplot_all(seeds_dataframe_reduced, show_plot = False, dataset_name = 'Seeds_Principal_Components')
+vis.pairplot_all(drug200_dataframe_reduced, show_plot = False, dataset_name = 'Drug200_Principal_Components')
+
+# Create KDE plots for all features for all the dataframes
+# KDE only really makes sense for Iris dataset (in cm) (similar variance, same units, not categorical, continuous)
+vis.kde_map_all(iris_dataset, show_plot=False, dataset_name="Iris", xaxis_label='Length (cm)')
+vis.kde_map_all(wheatseeds_dataset, show_plot=False, dataset_name="Seeds", xaxis_label="")
+# drug200_Numerical = pd.DataFrame(np.hstack((drug200_dataset_numpy_labels_ints, drug200_dataset_numpy_labels)), columns = drug200_dataset.columns.values.tolist())
+drug200_Numerical = drug200_dataset.copy()
+
+for col in drug200_Numerical.columns.values.tolist():
+    if drug200_Numerical[col].dtype == object:
+        drug200_Numerical[col] = (pd.factorize(drug200_Numerical[col])[0]+1) * 20
+vis.kde_map_all(drug200_Numerical, show_plot=False, dataset_name="Drug200", xaxis_label="")
+
+# Create KDE plots for the principal components instead of the features
+vis.kde_map_all(iris_dataframe_reduced, show_plot=False, dataset_name='Iris_Principal_Components', xaxis_label='')
+vis.kde_map_all(seeds_dataframe_reduced, show_plot=False, dataset_name='Seeds_Principal_Components', xaxis_label='')
+vis.kde_map_all(drug200_dataframe_reduced, show_plot=False, dataset_name='Drug200_Principal_Components', xaxis_label='')
+
 ## Train and Test Models
 
+<<<<<<< HEAD
+=======
+# Model Code Here
+>>>>>>> 241bb55903739b419b4920d63fb0984e9a23c576
 drug200_dataset_numpy_labels = np.ravel(drug200_dataset_numpy_labels, order='C')
 iris_dataset_numpy_labels = np.ravel(iris_dataset_numpy_labels, order='C')
 wheatseeds_dataset_numpy_labels = np.ravel(wheatseeds_dataset_numpy_labels, order='C')
@@ -143,6 +225,7 @@ seeds_knn = mod.applyKNN(seedsX_train, seedsY_train, seeds_knn_params['n_neighbo
 drug_knn_reduced = mod.applyKNN(drugX_train_reduced, drugY_train_reduced, red_drug_knn_params['n_neighbors'])
 iris_knn_reduced = mod.applyKNN(irisX_train_reduced, irisY_train_reduced, red_iris_knn_params['n_neighbors'])
 seeds_knn_reduced = mod.applyKNN(seedsX_train_reduced, seedsY_train_reduced, red_seeds_knn_params['n_neighbors'])
+<<<<<<< HEAD
 
 # TEST
 print("--------------- DRUG DATA -------------------")
@@ -204,12 +287,78 @@ seeds_knn_metrics = per.getMetrics(seeds_knn,seedsX_test,seedsY_test)
 # combine
 #drug_metrics = [drug_tree_metrics,drug_svm_metrics,drug_gp_metrics,drug_knn_metrics]
 #seeds_metrics = [iris_tree_metrics,iris_svm_metrics,iris_gp_metrics,iris_knn_metrics]
+=======
+
+## Report the Performance of Models
+
+print("--------------- DRUG DATA -------------------")
+print("Decision Tree:    ", mod.testModel(drug_tree, drugX_test, drugY_test))
+print("SVM:              ", mod.testModel(drug_svm, drugX_test, drugY_test))
+print("Gaussian Process: ", mod.testModel(drug_gp, drugX_test, drugY_test))
+print("KNN:              ", mod.testModel(drug_knn, drugX_test, drugY_test))
+print("--------------- REDUCED DRUG DATA -------------------")
+print("Decision Tree:    ", mod.testModel(drug_tree_reduced, drugX_test_reduced, drugY_test_reduced))
+print("SVM:              ", mod.testModel(drug_svm_reduced, drugX_test_reduced, drugY_test_reduced))
+print("Gaussian Process: ", mod.testModel(drug_gp_reduced, drugX_test_reduced, drugY_test_reduced))
+print("KNN:              ", mod.testModel(drug_knn_reduced, drugX_test_reduced, drugY_test_reduced))
+
+print("--------------- IRIS DATA -------------------")
+print("Decision Tree:    ", mod.testModel(iris_tree, irisX_test, irisY_test))
+print("SVM:              ", mod.testModel(iris_svm, irisX_test, irisY_test))
+print("Gaussian Process: ", mod.testModel(iris_gp, irisX_test, irisY_test))
+print("KNN:              ", mod.testModel(iris_knn, irisX_test, irisY_test))
+print("--------------- REDUCED IRIS DATA -------------------")
+print("Decision Tree:    ", mod.testModel(iris_tree_reduced, irisX_test_reduced, irisY_test_reduced))
+print("SVM:              ", mod.testModel(iris_svm_reduced, irisX_test_reduced, irisY_test_reduced))
+print("Gaussian Process: ", mod.testModel(iris_gp_reduced, irisX_test_reduced, irisY_test_reduced))
+print("KNN:              ", mod.testModel(iris_knn_reduced, irisX_test_reduced, irisY_test_reduced))
+
+print("--------------- SEEDS DATA ------------------")
+print("Decision Tree:    ", mod.testModel(seeds_tree, seedsX_test, seedsY_test))
+print("SVM:              ", mod.testModel(seeds_svm, seedsX_test, seedsY_test))
+print("Gaussian Process: ", mod.testModel(seeds_gp, seedsX_test, seedsY_test))
+print("KNN:              ", mod.testModel(seeds_knn, seedsX_test, seedsY_test))
+print("--------------- REDUCED SEEDS DATA ------------------")
+print("Decision Tree:    ", mod.testModel(seeds_tree_reduced, seedsX_test_reduced, seedsY_test_reduced))
+print("SVM:              ", mod.testModel(seeds_svm_reduced, seedsX_test_reduced, seedsY_test_reduced))
+print("Gaussian Process: ", mod.testModel(seeds_gp_reduced, seedsX_test_reduced, seedsY_test_reduced))
+print("KNN:              ", mod.testModel(seeds_knn_reduced, seedsX_test_reduced, seedsY_test_reduced))
+
+# Decision Trees
+drug_tree_metrics = per.getMetrics(drug_tree,drugX_test,drugY_test)
+iris_tree_metrics = per.getMetrics(iris_tree,irisX_test,irisY_test)
+seeds_tree_metrics = per.getMetrics(seeds_tree,seedsX_test,seedsY_test)
+
+# SVM
+drug_svm_metrics = per.getMetrics(drug_svm,drugX_test,drugY_test)
+iris_svm_metrics = per.getMetrics(iris_svm,irisX_test,irisY_test)
+seeds_svm_metrics = per.getMetrics(seeds_svm,seedsX_test,seedsY_test)
+
+# Gaussian Process
+drug_gp_metrics = per.getMetrics(drug_gp,drugX_test,drugY_test)
+iris_gp_metrics = per.getMetrics(iris_gp,irisX_test,irisY_test)
+seeds_gp_metrics = per.getMetrics(seeds_gp,seedsX_test,seedsY_test)
+
+# KNN
+drug_knn_metrics = per.getMetrics(drug_knn,drugX_test,drugY_test)
+iris_knn_metrics = per.getMetrics(iris_knn,irisX_test,irisY_test)
+seeds_knn_metrics = per.getMetrics(seeds_knn,seedsX_test,seedsY_test)
+
+# combine
+drug_metrics = [drug_tree_metrics,drug_svm_metrics,drug_gp_metrics,drug_knn_metrics]
+iris_metrics = [iris_tree_metrics,iris_svm_metrics,iris_gp_metrics,iris_knn_metrics]
+>>>>>>> 241bb55903739b419b4920d63fb0984e9a23c576
 seeds_metrics = [seeds_tree_metrics,seeds_svm_metrics,seeds_gp_metrics,seeds_knn_metrics]
 
 # print
 print('\n')
+<<<<<<< HEAD
 #per.printMetrics('drug',drug_metrics)
 #per.printMetrics('iris',seeds_metrics)
+=======
+per.printMetrics('drug',drug_metrics)
+per.printMetrics('iris',seeds_metrics)
+>>>>>>> 241bb55903739b419b4920d63fb0984e9a23c576
 per.printMetrics('seeds',seeds_metrics)
 
 # save (to datafiles)

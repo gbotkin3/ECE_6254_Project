@@ -123,6 +123,9 @@ def testModel(model, Xtest, Ytest):
     y_pred = model.predict(Xtest)
     acc = accuracy_score(y_true = Ytest, y_pred = y_pred)
     return acc
+<<<<<<< HEAD
 
 
 # PCA Dim
+=======
+>>>>>>> 241bb55903739b419b4920d63fb0984e9a23c576
