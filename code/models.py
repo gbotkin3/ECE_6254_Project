@@ -4,10 +4,13 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.gaussian_process.kernels import RBF
+from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import accuracy_score, balanced_accuracy_score, mean_squared_error, roc_auc_score
 from sklearn.calibration import CalibratedClassifierCV
 
+from sklearn.utils._testing import ignore_warnings
+from sklearn.exceptions import ConvergenceWarning
 import numpy as np 
 
 # Loading Datasets
@@ -57,7 +60,13 @@ def applyKNN(Xtrain, Ytrain, n_neighbors):
     knn_clf = knn_clf.fit(Xtrain, Ytrain)
     return knn_clf
 
-def DecisionTreeTuning(Xtrain, Ytrain, Xtest, Ytest):
+@ignore_warnings(category=ConvergenceWarning)
+def applyMLP(Xtrain, Ytrain, alpha, activation):
+    mlp_clf = MLPClassifier(alpha=alpha, activation=activation)
+    mlp_clf = mlp_clf.fit(Xtrain, Ytrain)
+    return mlp_clf
+
+def DecisionTreeTuning(Xtrain, Ytrain, Xtest, Ytest, debug=False):
     param_grid = {
         "max_depth": [3,5,10,15,20],
         "min_samples_split": [2,5,7,10],
@@ -68,13 +77,14 @@ def DecisionTreeTuning(Xtrain, Ytrain, Xtest, Ytest):
     clf = DecisionTreeClassifier(random_state=42)
     grid_cv = GridSearchCV(clf, param_grid, scoring="roc_auc_ovr", n_jobs=-1, cv=3).fit(Xtrain, Ytrain)
 
-    print("TREE: Param for GS", grid_cv.best_params_)
-    print("TREE: CV score for GS", grid_cv.best_score_)
-    print("TREE: Train AUC ROC Score for GS: ", roc_auc_score(Ytrain, grid_cv.predict_proba(Xtrain), multi_class='ovr'))
-    print("TREE: Test AUC ROC Score for GS: ", roc_auc_score(Ytest, grid_cv.predict_proba(Xtest), multi_class='ovr'))
+    if (debug):
+        print("TREE: Param for GS", grid_cv.best_params_)
+        print("TREE: CV score for GS", grid_cv.best_score_)
+        print("TREE: Train AUC ROC Score for GS: ", roc_auc_score(Ytrain, grid_cv.predict_proba(Xtrain), multi_class='ovr'))
+        print("TREE: Test AUC ROC Score for GS: ", roc_auc_score(Ytest, grid_cv.predict_proba(Xtest), multi_class='ovr'))
     return grid_cv.best_params_
 
-def LinearSVCTuning(Xtrain, Ytrain, Xtest, Ytest):
+def LinearSVCTuning(Xtrain, Ytrain, Xtest, Ytest, debug=False):
     param_grid = {
         "C": [1,10,100,1000],
         "tol": [1,0.1,0.01,0.001,0.0001, 0.00001],
@@ -85,12 +95,13 @@ def LinearSVCTuning(Xtrain, Ytrain, Xtest, Ytest):
     clf = CalibratedClassifierCV(LinearSVC(random_state=42))
     grid_cv = GridSearchCV(clf, param_grid, scoring="roc_auc_ovr", n_jobs=-1, cv=3).fit(Xtrain, Ytrain)
 
-    print("SVC: Param for GS", grid_cv.best_params_)
-    print("SVC: CV score for GS", grid_cv.best_score_)
-    print("SVC: Train AUC ROC Score for GS: ", roc_auc_score(Ytrain, grid_cv.predict(Xtrain), multi_class='ovr'))
-    print("SVC: Test AUC ROC Score for GS: ", roc_auc_score(Ytest, grid_cv.predict(Xtest), multi_class='ovr'))
+    if (debug):
+        print("SVC: Param for GS", grid_cv.best_params_)
+        print("SVC: CV score for GS", grid_cv.best_score_)
+        print("SVC: Train AUC ROC Score for GS: ", roc_auc_score(Ytrain, grid_cv.predict(Xtrain), multi_class='ovr'))
+        print("SVC: Test AUC ROC Score for GS: ", roc_auc_score(Ytest, grid_cv.predict(Xtest), multi_class='ovr'))
 
-def gpTuning(Xtrain, Ytrain, Xtest, Ytest):
+def gpTuning(Xtrain, Ytrain, Xtest, Ytest, debug=False):
     param_grid = {
         "kernel": [RBF(l) for l in np.logspace(-1, 0, 1, 2)],
     }
@@ -98,13 +109,14 @@ def gpTuning(Xtrain, Ytrain, Xtest, Ytest):
     clf = GaussianProcessClassifier(random_state=42)
     grid_cv = GridSearchCV(clf, param_grid, scoring="roc_auc_ovr", n_jobs=-1, cv=3).fit(Xtrain, Ytrain)
 
-    print("GP: Param for GS", grid_cv.best_params_)
-    print("GP: CV score for GS", grid_cv.best_score_)
-    print("GP: Train AUC ROC Score for GS: ", roc_auc_score(Ytrain, grid_cv.predict_proba(Xtrain), multi_class='ovr'))
-    print("GP: Test AUC ROC Score for GS: ", roc_auc_score(Ytest, grid_cv.predict_proba(Xtest), multi_class='ovr'))
+    if (debug):
+        print("GP: Param for GS", grid_cv.best_params_)
+        print("GP: CV score for GS", grid_cv.best_score_)
+        print("GP: Train AUC ROC Score for GS: ", roc_auc_score(Ytrain, grid_cv.predict_proba(Xtrain), multi_class='ovr'))
+        print("GP: Test AUC ROC Score for GS: ", roc_auc_score(Ytest, grid_cv.predict_proba(Xtest), multi_class='ovr'))
     return grid_cv.best_params_
 
-def KNNTuning(Xtrain, Ytrain, Xtest, Ytest):
+def KNNTuning(Xtrain, Ytrain, Xtest, Ytest, debug=False):
     param_grid = {
         "n_neighbors": [3, 5, 7, 10, 13, 15, 17, 20, 23, 25, 27, 30],
     }
@@ -112,10 +124,28 @@ def KNNTuning(Xtrain, Ytrain, Xtest, Ytest):
     clf = KNeighborsClassifier()
     grid_cv = GridSearchCV(clf, param_grid, scoring="roc_auc_ovr", n_jobs=-1, cv=3).fit(Xtrain, Ytrain)
 
-    print("KNN: Param for GS", grid_cv.best_params_)
-    print("KNN: CV score for GS", grid_cv.best_score_)
-    print("KNN: Train AUC ROC Score for GS: ", roc_auc_score(Ytrain, grid_cv.predict_proba(Xtrain), multi_class='ovr'))
-    print("KNN: Test AUC ROC Score for GS: ", roc_auc_score(Ytest, grid_cv.predict_proba(Xtest), multi_class='ovr'))
+    if (debug):
+        print("KNN: Param for GS", grid_cv.best_params_)
+        print("KNN: CV score for GS", grid_cv.best_score_)
+        print("KNN: Train AUC ROC Score for GS: ", roc_auc_score(Ytrain, grid_cv.predict_proba(Xtrain), multi_class='ovr'))
+        print("KNN: Test AUC ROC Score for GS: ", roc_auc_score(Ytest, grid_cv.predict_proba(Xtest), multi_class='ovr'))
+    return grid_cv.best_params_
+
+@ignore_warnings(category=ConvergenceWarning)
+def MLPtuning(Xtrain, Ytrain, Xtest, Ytest, debug=False):
+    param_grid = {
+        'activation': ['identity', 'logistic', 'tanh', 'relu'],
+        "alpha":  10.0 ** -np.arange(1, 10),
+    }
+
+    clf = MLPClassifier()
+    grid_cv = GridSearchCV(clf, param_grid, scoring="roc_auc_ovr", n_jobs=None, cv=3).fit(Xtrain, Ytrain)
+
+    if (debug):
+        print("MLP: Param for GS", grid_cv.best_params_)
+        print("MLP: CV score for GS", grid_cv.best_score_)
+        print("MLP: Train AUC ROC Score for GS: ", roc_auc_score(Ytrain, grid_cv.predict_proba(Xtrain), multi_class='ovr'))
+        print("MLP: Test AUC ROC Score for GS: ", roc_auc_score(Ytest, grid_cv.predict_proba(Xtest), multi_class='ovr'))
     return grid_cv.best_params_
 
 
@@ -123,9 +153,3 @@ def testModel(model, Xtest, Ytest):
     y_pred = model.predict(Xtest)
     acc = accuracy_score(y_true = Ytest, y_pred = y_pred)
     return acc
-<<<<<<< HEAD
-
-
-# PCA Dim
-=======
->>>>>>> 241bb55903739b419b4920d63fb0984e9a23c576

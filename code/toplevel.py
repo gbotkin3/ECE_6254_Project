@@ -9,7 +9,7 @@ import pandas as pd
 # ignore sklearn FutureWarning
 from warnings import simplefilter
 simplefilter(action='ignore', category=FutureWarning)
-
+simplefilter(action='ignore', category=mod.ConvergenceWarning)
 ## Import the Datasets as Panda Dataframes for visualization and Numpy Arrays for Training and Testing Models
 
 iris_dataset = dl.LoadDataset('iris.csv')        # Iris Dataset in Panda Dataframe Format
@@ -56,15 +56,9 @@ drug200_dataset_reduced = dl.ReduceDimensions(drug200_dataset_numpy, 3)        #
 # drug200_dataset_numpy_labels: Numpy Array Containg the Drug Data Samples Labels
 # drug200_dataset_reduced: PCA Reduced Numpy Array Containg Drug Data
 
-<<<<<<< HEAD
-# print("Iris Dataset Panda: \n", iris_dataset, "\n Iris Dataset Numpy: \n", iris_dataset_numpy, "\n Iris Dataset Labels: \n", iris_dataset_numpy_labels, "\n Iris Dataset Reduced: \n", iris_dataset_reduced)
-# print("Seeds Dataset Panda: \n", wheatseeds_dataset, "\n Seeds Dataset Numpy: \n", wheatseeds_dataset_numpy, "\n Seeds Dataset Labels: \n", wheatseeds_dataset_numpy_labels, "\n Seeds Dataset Reduced: \n", wheatseeds_dataset_reduced)
-# print("Drug Dataset Panda: \n", drug200_dataset, "\n Drug Dataset Numpy: \n", drug200_dataset_numpy, "\n Drug Dataset Labels: \n", drug200_dataset_numpy_labels, "\n Drug Dataset Reduced: \n", drug200_dataset_reduced)
-=======
 #print("Iris Dataset Panda: \n", iris_dataset, "\n Iris Dataset Numpy: \n", iris_dataset_numpy, "\n Iris Dataset Labels: \n", iris_dataset_numpy_labels, "\n Iris Dataset Reduced: \n", iris_dataset_reduced)
 #print("Seeds Dataset Panda: \n", wheatseeds_dataset, "\n Seeds Dataset Numpy: \n", wheatseeds_dataset_numpy, "\n Seeds Dataset Labels: \n", wheatseeds_dataset_numpy_labels, "\n Seeds Dataset Reduced: \n", wheatseeds_dataset_reduced)
 #print("Drug Dataset Panda: \n", drug200_dataset, "\n Drug Dataset Numpy: \n", drug200_dataset_numpy, "\n Drug Dataset Labels: \n", drug200_dataset_numpy_labels, "\n Drug Dataset Reduced: \n", drug200_dataset_reduced)
->>>>>>> 241bb55903739b419b4920d63fb0984e9a23c576
 
 ## Visualize the Datasets
 
@@ -142,10 +136,7 @@ vis.kde_map_all(drug200_dataframe_reduced, show_plot=False, dataset_name='Drug20
 
 ## Train and Test Models
 
-<<<<<<< HEAD
-=======
 # Model Code Here
->>>>>>> 241bb55903739b419b4920d63fb0984e9a23c576
 drug200_dataset_numpy_labels = np.ravel(drug200_dataset_numpy_labels, order='C')
 iris_dataset_numpy_labels = np.ravel(iris_dataset_numpy_labels, order='C')
 wheatseeds_dataset_numpy_labels = np.ravel(wheatseeds_dataset_numpy_labels, order='C')
@@ -174,27 +165,33 @@ seedsX_train_reduced = dl.scaler(seedsX_train_reduced)
 seedsX_test_reduced = dl.scaler(seedsX_test_reduced)
 
 
-# Decision Trees
+# Tuning
 drug_tree_params = mod.DecisionTreeTuning(drugX_train, drugY_train, drugX_test, drugY_test)
 drug_knn_params = mod.KNNTuning(drugX_train, drugY_train, drugX_test, drugY_test)
 drug_gp_params = mod.gpTuning(drugX_train, drugY_train, drugX_test, drugY_test)
+drug_mlp_params = mod.MLPtuning(drugX_train, drugY_train, drugX_test, drugY_test)
 iris_tree_params = mod.DecisionTreeTuning(irisX_train, irisY_train, irisX_test, irisY_test)
 iris_knn_params = mod.KNNTuning(irisX_train, irisY_train, irisX_test, irisY_test)
 iris_gp_params = mod.gpTuning(irisX_train, irisY_train, irisX_test, irisY_test)
+iris_mlp_params = mod.MLPtuning(irisX_train, irisY_train, irisX_test, irisY_test)
 seeds_tree_params = mod.DecisionTreeTuning(seedsX_train, seedsY_train, seedsX_test, seedsY_test)
 seeds_knn_params = mod.KNNTuning(seedsX_train, seedsY_train, seedsX_test, seedsY_test)
 seeds_gp_params = mod.gpTuning(seedsX_train, seedsY_train, seedsX_test, seedsY_test)
+seeds_mlp_params = mod.MLPtuning(seedsX_train, seedsY_train, seedsX_test, seedsY_test)
 
 red_drug_tree_params = mod.DecisionTreeTuning(drugX_train_reduced, drugY_train_reduced, drugX_test_reduced, drugY_test_reduced)
 red_drug_knn_params = mod.KNNTuning(drugX_train_reduced, drugY_train_reduced, drugX_test_reduced, drugY_test_reduced)
 red_drug_gp_params = mod.gpTuning(drugX_train_reduced, drugY_train_reduced, drugX_test_reduced, drugY_test_reduced)
+red_drug_mlp_params = mod.MLPtuning(drugX_train_reduced, drugY_train_reduced, drugX_test_reduced, drugY_test_reduced)
 red_iris_tree_params = mod.DecisionTreeTuning(irisX_train_reduced, irisY_train_reduced, irisX_test_reduced, irisY_test_reduced)
 red_iris_knn_params = mod.KNNTuning(irisX_train_reduced, irisY_train_reduced, irisX_test_reduced, irisY_test_reduced)
 red_iris_gp_params = mod.gpTuning(irisX_train_reduced, irisY_train_reduced, irisX_test_reduced, irisY_test_reduced)
+red_iris_mlp_params = mod.MLPtuning(irisX_train_reduced, irisY_train_reduced, irisX_test_reduced, irisY_test_reduced)
 red_seeds_tree_params = mod.DecisionTreeTuning(seedsX_train_reduced, seedsY_train_reduced, seedsX_test_reduced, seedsY_test_reduced)
 red_seeds_knn_params = mod.KNNTuning(seedsX_train_reduced, seedsY_train_reduced, seedsX_test_reduced, seedsY_test_reduced)
 red_seeds_gp_params = mod.gpTuning(seedsX_train_reduced, seedsY_train_reduced, seedsX_test_reduced, seedsY_test_reduced)
-
+red_seeds_mlp_params = mod.MLPtuning(seedsX_train_reduced, seedsY_train_reduced, seedsX_test_reduced, seedsY_test_reduced)
+# Decision Trees
 drug_tree = mod.applyDecisionTree(drugX_train, drugY_train, drug_tree_params['max_depth'], drug_tree_params['min_samples_split'], drug_tree_params['min_samples_leaf'], drug_tree_params['criterion'])
 iris_tree = mod.applyDecisionTree(irisX_train, irisY_train, iris_tree_params['max_depth'], iris_tree_params['min_samples_split'], iris_tree_params['min_samples_leaf'], iris_tree_params['criterion'])
 seeds_tree = mod.applyDecisionTree(seedsX_train, seedsY_train, seeds_tree_params['max_depth'], seeds_tree_params['min_samples_split'], seeds_tree_params['min_samples_leaf'], seeds_tree_params['criterion'])
@@ -225,104 +222,54 @@ seeds_knn = mod.applyKNN(seedsX_train, seedsY_train, seeds_knn_params['n_neighbo
 drug_knn_reduced = mod.applyKNN(drugX_train_reduced, drugY_train_reduced, red_drug_knn_params['n_neighbors'])
 iris_knn_reduced = mod.applyKNN(irisX_train_reduced, irisY_train_reduced, red_iris_knn_params['n_neighbors'])
 seeds_knn_reduced = mod.applyKNN(seedsX_train_reduced, seedsY_train_reduced, red_seeds_knn_params['n_neighbors'])
-<<<<<<< HEAD
 
-# TEST
+# MLP CLF
+drug_mlp = mod.applyMLP(drugX_train, drugY_train, drug_mlp_params['alpha'], drug_mlp_params['activation'])
+iris_mlp = mod.applyMLP(irisX_train, irisY_train, iris_mlp_params['alpha'], iris_mlp_params['activation'])
+seeds_mlp = mod.applyMLP(seedsX_train, seedsY_train, seeds_mlp_params['alpha'], seeds_mlp_params['activation'])
+drug_mlp_reduced = mod.applyMLP(drugX_train_reduced, drugY_train_reduced, red_drug_mlp_params['alpha'], red_drug_mlp_params['activation'])
+iris_mlp_reduced = mod.applyMLP(irisX_train_reduced, irisY_train_reduced, red_iris_mlp_params['alpha'], red_iris_mlp_params['activation'])
+seeds_mlp_reduced = mod.applyMLP(seedsX_train_reduced, seedsY_train_reduced, red_seeds_mlp_params['alpha'], red_seeds_mlp_params['activation'])
+
+## Report the Performance of Models
 print("--------------- DRUG DATA -------------------")
 print("Decision Tree:    ", mod.testModel(drug_tree, drugX_test, drugY_test))
 print("SVM:              ", mod.testModel(drug_svm, drugX_test, drugY_test))
 print("Gaussian Process: ", mod.testModel(drug_gp, drugX_test, drugY_test))
 print("KNN:              ", mod.testModel(drug_knn, drugX_test, drugY_test))
+print("MLP:              ", mod.testModel(drug_mlp, drugX_test, drugY_test))
 print("--------------- REDUCED DRUG DATA -------------------")
 print("Decision Tree:    ", mod.testModel(drug_tree_reduced, drugX_test_reduced, drugY_test_reduced))
 print("SVM:              ", mod.testModel(drug_svm_reduced, drugX_test_reduced, drugY_test_reduced))
 print("Gaussian Process: ", mod.testModel(drug_gp_reduced, drugX_test_reduced, drugY_test_reduced))
 print("KNN:              ", mod.testModel(drug_knn_reduced, drugX_test_reduced, drugY_test_reduced))
+print("MLP:              ", mod.testModel(drug_mlp_reduced, drugX_test_reduced, drugY_test_reduced))
 
 print("--------------- IRIS DATA -------------------")
 print("Decision Tree:    ", mod.testModel(iris_tree, irisX_test, irisY_test))
 print("SVM:              ", mod.testModel(iris_svm, irisX_test, irisY_test))
 print("Gaussian Process: ", mod.testModel(iris_gp, irisX_test, irisY_test))
 print("KNN:              ", mod.testModel(iris_knn, irisX_test, irisY_test))
+print("MLP:              ", mod.testModel(iris_mlp, irisX_test, irisY_test))
 print("--------------- REDUCED IRIS DATA -------------------")
 print("Decision Tree:    ", mod.testModel(iris_tree_reduced, irisX_test_reduced, irisY_test_reduced))
 print("SVM:              ", mod.testModel(iris_svm_reduced, irisX_test_reduced, irisY_test_reduced))
 print("Gaussian Process: ", mod.testModel(iris_gp_reduced, irisX_test_reduced, irisY_test_reduced))
 print("KNN:              ", mod.testModel(iris_knn_reduced, irisX_test_reduced, irisY_test_reduced))
+print("MLP:              ", mod.testModel(iris_mlp_reduced, irisX_test_reduced, irisY_test_reduced))
 
 print("--------------- SEEDS DATA ------------------")
 print("Decision Tree:    ", mod.testModel(seeds_tree, seedsX_test, seedsY_test))
 print("SVM:              ", mod.testModel(seeds_svm, seedsX_test, seedsY_test))
 print("Gaussian Process: ", mod.testModel(seeds_gp, seedsX_test, seedsY_test))
 print("KNN:              ", mod.testModel(seeds_knn, seedsX_test, seedsY_test))
+print("MLP:              ", mod.testModel(seeds_mlp, seedsX_test, seedsY_test))
 print("--------------- REDUCED SEEDS DATA ------------------")
 print("Decision Tree:    ", mod.testModel(seeds_tree_reduced, seedsX_test_reduced, seedsY_test_reduced))
 print("SVM:              ", mod.testModel(seeds_svm_reduced, seedsX_test_reduced, seedsY_test_reduced))
 print("Gaussian Process: ", mod.testModel(seeds_gp_reduced, seedsX_test_reduced, seedsY_test_reduced))
 print("KNN:              ", mod.testModel(seeds_knn_reduced, seedsX_test_reduced, seedsY_test_reduced))
-
-
-## Report the Performance of Models
-
-# Decision Trees
-#drug_tree_metrics = per.getMetrics(drug_tree,drugX_test,drugY_test)
-#iris_tree_metrics = per.getMetrics(iris_tree,irisX_test,irisY_test)
-seeds_tree_metrics = per.getMetrics(seeds_tree,seedsX_test,seedsY_test)
-
-# SVM
-#drug_svm_metrics = per.getMetrics(drug_svm,drugX_test,drugY_test)
-#iris_svm_metrics = per.getMetrics(iris_svm,irisX_test,irisY_test)
-seeds_svm_metrics = per.getMetrics(seeds_svm,seedsX_test,seedsY_test)
-
-# Gaussian Process
-#drug_gp_metrics = per.getMetrics(drug_gp,drugX_test,drugY_test)
-#iris_gp_metrics = per.getMetrics(iris_gp,irisX_test,irisY_test)
-seeds_gp_metrics = per.getMetrics(seeds_gp,seedsX_test,seedsY_test)
-
-# KNN
-#drug_knn_metrics = per.getMetrics(drug_knn,drugX_test,drugY_test)
-#iris_knn_metrics = per.getMetrics(iris_knn,irisX_test,irisY_test)
-seeds_knn_metrics = per.getMetrics(seeds_knn,seedsX_test,seedsY_test)
-
-# combine
-#drug_metrics = [drug_tree_metrics,drug_svm_metrics,drug_gp_metrics,drug_knn_metrics]
-#seeds_metrics = [iris_tree_metrics,iris_svm_metrics,iris_gp_metrics,iris_knn_metrics]
-=======
-
-## Report the Performance of Models
-
-print("--------------- DRUG DATA -------------------")
-print("Decision Tree:    ", mod.testModel(drug_tree, drugX_test, drugY_test))
-print("SVM:              ", mod.testModel(drug_svm, drugX_test, drugY_test))
-print("Gaussian Process: ", mod.testModel(drug_gp, drugX_test, drugY_test))
-print("KNN:              ", mod.testModel(drug_knn, drugX_test, drugY_test))
-print("--------------- REDUCED DRUG DATA -------------------")
-print("Decision Tree:    ", mod.testModel(drug_tree_reduced, drugX_test_reduced, drugY_test_reduced))
-print("SVM:              ", mod.testModel(drug_svm_reduced, drugX_test_reduced, drugY_test_reduced))
-print("Gaussian Process: ", mod.testModel(drug_gp_reduced, drugX_test_reduced, drugY_test_reduced))
-print("KNN:              ", mod.testModel(drug_knn_reduced, drugX_test_reduced, drugY_test_reduced))
-
-print("--------------- IRIS DATA -------------------")
-print("Decision Tree:    ", mod.testModel(iris_tree, irisX_test, irisY_test))
-print("SVM:              ", mod.testModel(iris_svm, irisX_test, irisY_test))
-print("Gaussian Process: ", mod.testModel(iris_gp, irisX_test, irisY_test))
-print("KNN:              ", mod.testModel(iris_knn, irisX_test, irisY_test))
-print("--------------- REDUCED IRIS DATA -------------------")
-print("Decision Tree:    ", mod.testModel(iris_tree_reduced, irisX_test_reduced, irisY_test_reduced))
-print("SVM:              ", mod.testModel(iris_svm_reduced, irisX_test_reduced, irisY_test_reduced))
-print("Gaussian Process: ", mod.testModel(iris_gp_reduced, irisX_test_reduced, irisY_test_reduced))
-print("KNN:              ", mod.testModel(iris_knn_reduced, irisX_test_reduced, irisY_test_reduced))
-
-print("--------------- SEEDS DATA ------------------")
-print("Decision Tree:    ", mod.testModel(seeds_tree, seedsX_test, seedsY_test))
-print("SVM:              ", mod.testModel(seeds_svm, seedsX_test, seedsY_test))
-print("Gaussian Process: ", mod.testModel(seeds_gp, seedsX_test, seedsY_test))
-print("KNN:              ", mod.testModel(seeds_knn, seedsX_test, seedsY_test))
-print("--------------- REDUCED SEEDS DATA ------------------")
-print("Decision Tree:    ", mod.testModel(seeds_tree_reduced, seedsX_test_reduced, seedsY_test_reduced))
-print("SVM:              ", mod.testModel(seeds_svm_reduced, seedsX_test_reduced, seedsY_test_reduced))
-print("Gaussian Process: ", mod.testModel(seeds_gp_reduced, seedsX_test_reduced, seedsY_test_reduced))
-print("KNN:              ", mod.testModel(seeds_knn_reduced, seedsX_test_reduced, seedsY_test_reduced))
+print("MLP:              ", mod.testModel(seeds_mlp_reduced, seedsX_test_reduced, seedsY_test_reduced))
 
 # Decision Trees
 drug_tree_metrics = per.getMetrics(drug_tree,drugX_test,drugY_test)
@@ -344,21 +291,20 @@ drug_knn_metrics = per.getMetrics(drug_knn,drugX_test,drugY_test)
 iris_knn_metrics = per.getMetrics(iris_knn,irisX_test,irisY_test)
 seeds_knn_metrics = per.getMetrics(seeds_knn,seedsX_test,seedsY_test)
 
+#MLP
+drug_mlp_metrics = per.getMetrics(drug_mlp,drugX_test,drugY_test)
+iris_mlp_metrics = per.getMetrics(iris_mlp,irisX_test,irisY_test)
+seeds_mlp_metrics = per.getMetrics(seeds_mlp,seedsX_test,seedsY_test)
+
 # combine
-drug_metrics = [drug_tree_metrics,drug_svm_metrics,drug_gp_metrics,drug_knn_metrics]
-iris_metrics = [iris_tree_metrics,iris_svm_metrics,iris_gp_metrics,iris_knn_metrics]
->>>>>>> 241bb55903739b419b4920d63fb0984e9a23c576
-seeds_metrics = [seeds_tree_metrics,seeds_svm_metrics,seeds_gp_metrics,seeds_knn_metrics]
+drug_metrics = [drug_tree_metrics,drug_svm_metrics,drug_gp_metrics,drug_knn_metrics, drug_mlp_metrics]
+iris_metrics = [iris_tree_metrics,iris_svm_metrics,iris_gp_metrics,iris_knn_metrics, iris_mlp_metrics]
+seeds_metrics = [seeds_tree_metrics,seeds_svm_metrics,seeds_gp_metrics,seeds_knn_metrics, seeds_mlp_metrics]
 
 # print
 print('\n')
-<<<<<<< HEAD
-#per.printMetrics('drug',drug_metrics)
-#per.printMetrics('iris',seeds_metrics)
-=======
 per.printMetrics('drug',drug_metrics)
 per.printMetrics('iris',seeds_metrics)
->>>>>>> 241bb55903739b419b4920d63fb0984e9a23c576
 per.printMetrics('seeds',seeds_metrics)
 
 # save (to datafiles)
