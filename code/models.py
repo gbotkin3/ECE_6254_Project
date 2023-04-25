@@ -102,7 +102,7 @@ def LinearSVCTuning(Xtrain, Ytrain, Xtest, Ytest, random_state, debug=False):
 
 def gpTuning(Xtrain, Ytrain, Xtest, Ytest, random_state, debug=False):
     param_grid = {
-        "kernel": [RBF(l) for l in np.logspace(-1, 0, 1, 2)],
+        "kernel": [RBF(l) for l in np.logspace(-3.0, 2.0, num=11)],
     }
 
     clf = GaussianProcessClassifier(random_state=random_state)
