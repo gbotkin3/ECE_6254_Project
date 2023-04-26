@@ -11,7 +11,7 @@ from sklearn.calibration import CalibratedClassifierCV
 
 from sklearn.utils._testing import ignore_warnings
 from sklearn.exceptions import ConvergenceWarning
-import numpy as np 
+import numpy as np
 
 # Loading Datasets
 def loadAllDatasets():
@@ -40,32 +40,38 @@ def splitFeaturesTarget(drug, iris, seeds):
     targets = [drug_target, iris_target, seeds_target]
     return(features, targets)
 
-def applyDecisionTree(Xtrain, Ytrain, max_depth, min_samples_split, min_samples_leaf, criterion, random_state):
-    tree_clf = DecisionTreeClassifier(max_depth=max_depth, min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf, criterion=criterion, random_state=random_state)
+@ignore_warnings(category=ConvergenceWarning)
+def applyDecisionTree(Xtrain, Ytrain, max_depth, min_samples_split, min_samples_leaf, criterion):
+    tree_clf = DecisionTreeClassifier(max_depth=max_depth, min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf, criterion=criterion)
     tree_clf = tree_clf.fit(Xtrain, Ytrain)
     return tree_clf
 
-def applyLinearSVC(Xtrain, Ytrain, random_state):
-    linearSVC_clf = CalibratedClassifierCV(LinearSVC(random_state=random_state))
+@ignore_warnings(category=ConvergenceWarning)
+def applyLinearSVC(Xtrain, Ytrain):
+    linearSVC_clf = CalibratedClassifierCV(LinearSVC())
     linearSVC_clf = linearSVC_clf.fit(Xtrain, Ytrain)
     return linearSVC_clf
 
-def applyGP(Xtrain, Ytrain, kernel, random_state):
-    gp_clf = GaussianProcessClassifier(kernel=kernel, random_state=random_state)
+@ignore_warnings(category=ConvergenceWarning)
+def applyGP(Xtrain, Ytrain, kernel):
+    gp_clf = GaussianProcessClassifier(kernel=kernel)
     gp_clf = gp_clf.fit(Xtrain, Ytrain)
     return gp_clf
 
+@ignore_warnings(category=ConvergenceWarning)
 def applyKNN(Xtrain, Ytrain, n_neighbors):
     knn_clf = KNeighborsClassifier(n_neighbors=n_neighbors)
     knn_clf = knn_clf.fit(Xtrain, Ytrain)
     return knn_clf
 
-def applyMLP(Xtrain, Ytrain, alpha, activation, random_state):
-    mlp_clf = MLPClassifier(alpha=alpha, activation=activation, random_state=random_state)
+@ignore_warnings(category=ConvergenceWarning)
+def applyMLP(Xtrain, Ytrain, alpha, activation):
+    mlp_clf = MLPClassifier(alpha=alpha, activation=activation)
     mlp_clf = mlp_clf.fit(Xtrain, Ytrain)
     return mlp_clf
 
-def DecisionTreeTuning(Xtrain, Ytrain, Xtest, Ytest, random_state, debug=False):
+@ignore_warnings(category=ConvergenceWarning)
+def DecisionTreeTuning(Xtrain, Ytrain, Xtest, Ytest, debug=False):
     param_grid = {
         "max_depth": [3,5,10,15,20],
         "min_samples_split": [2,5,7,10],
@@ -73,7 +79,7 @@ def DecisionTreeTuning(Xtrain, Ytrain, Xtest, Ytest, random_state, debug=False):
         "criterion": ['gini', 'entropy']
     }
 
-    clf = DecisionTreeClassifier(random_state=random_state)
+    clf = DecisionTreeClassifier()
     grid_cv = GridSearchCV(clf, param_grid, scoring="roc_auc_ovr", n_jobs=-1, cv=3).fit(Xtrain, Ytrain)
 
     if (debug):
@@ -83,7 +89,8 @@ def DecisionTreeTuning(Xtrain, Ytrain, Xtest, Ytest, random_state, debug=False):
         print("TREE: Test AUC ROC Score for GS: ", roc_auc_score(Ytest, grid_cv.predict_proba(Xtest), multi_class='ovr'))
     return grid_cv.best_params_
 
-def LinearSVCTuning(Xtrain, Ytrain, Xtest, Ytest, random_state, debug=False):
+@ignore_warnings(category=ConvergenceWarning)
+def LinearSVCTuning(Xtrain, Ytrain, Xtest, Ytest, debug=False):
     param_grid = {
         "C": [1,10,100,1000],
         "tol": [1,0.1,0.01,0.001,0.0001, 0.00001],
@@ -91,7 +98,7 @@ def LinearSVCTuning(Xtrain, Ytrain, Xtest, Ytest, random_state, debug=False):
         "penalty": ['l2']
     }
 
-    clf = CalibratedClassifierCV(LinearSVC(random_state=random_state))
+    clf = CalibratedClassifierCV(LinearSVC())
     grid_cv = GridSearchCV(clf, param_grid, scoring="roc_auc_ovr", n_jobs=-1, cv=3).fit(Xtrain, Ytrain)
 
     if (debug):
@@ -100,12 +107,13 @@ def LinearSVCTuning(Xtrain, Ytrain, Xtest, Ytest, random_state, debug=False):
         print("SVC: Train AUC ROC Score for GS: ", roc_auc_score(Ytrain, grid_cv.predict(Xtrain), multi_class='ovr'))
         print("SVC: Test AUC ROC Score for GS: ", roc_auc_score(Ytest, grid_cv.predict(Xtest), multi_class='ovr'))
 
-def gpTuning(Xtrain, Ytrain, Xtest, Ytest, random_state, debug=False):
+@ignore_warnings(category=ConvergenceWarning)
+def gpTuning(Xtrain, Ytrain, Xtest, Ytest, debug=False):
     param_grid = {
         "kernel": [RBF(l) for l in np.logspace(-3.0, 2.0, num=11)],
     }
 
-    clf = GaussianProcessClassifier(random_state=random_state)
+    clf = GaussianProcessClassifier()
     grid_cv = GridSearchCV(clf, param_grid, scoring="roc_auc_ovr", n_jobs=None, cv=3).fit(Xtrain, Ytrain)
 
     if (debug):
@@ -115,6 +123,7 @@ def gpTuning(Xtrain, Ytrain, Xtest, Ytest, random_state, debug=False):
         print("GP: Test AUC ROC Score for GS: ", roc_auc_score(Ytest, grid_cv.predict_proba(Xtest), multi_class='ovr'))
     return grid_cv.best_params_
 
+@ignore_warnings(category=ConvergenceWarning)
 def KNNTuning(Xtrain, Ytrain, Xtest, Ytest, debug=False):
     param_grid = {
         "n_neighbors": [3, 5, 7, 10, 13, 15, 17, 20, 23, 25, 27, 30],
@@ -130,13 +139,14 @@ def KNNTuning(Xtrain, Ytrain, Xtest, Ytest, debug=False):
         print("KNN: Test AUC ROC Score for GS: ", roc_auc_score(Ytest, grid_cv.predict_proba(Xtest), multi_class='ovr'))
     return grid_cv.best_params_
 
-def MLPtuning(Xtrain, Ytrain, Xtest, Ytest, random_state, debug=False):
+@ignore_warnings(category=ConvergenceWarning)
+def MLPtuning(Xtrain, Ytrain, Xtest, Ytest, debug=False):
     param_grid = {
         'activation': ['identity', 'logistic', 'tanh', 'relu'],
         "alpha":  10.0 ** -np.arange(1, 10),
     }
 
-    clf = MLPClassifier(random_state=random_state)
+    clf = MLPClassifier()
     grid_cv = GridSearchCV(clf, param_grid, scoring="roc_auc_ovr", n_jobs=None, cv=3).fit(Xtrain, Ytrain)
 
     if (debug):
